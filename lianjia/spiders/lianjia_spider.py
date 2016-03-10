@@ -10,9 +10,16 @@ class lianjiaSpider(scrapy.Spider):
             'daxing': 100, 'yizhuangkaifaqu': 52, 'shunyi': 100, 'fangshan': 100, 
             'mentougou': 49, 'pinggu': 0, 'huairou': 1, 'miyun': 1, 'yanqing': 1,
             'yanjiao': 100}
+
+    house_type = "ershoufang"
+    county = "chaoyang"
+    city = "bj"
+
+    base_url = "http://{ct}.lianjia.com/{t}/{c}/pg%{n}"
+
     start_urls = []
-    for i in range(100):
-        start_urls.append("http://bj.lianjia.com/ershoufang/xicheng/pg%s" % str(i+1))
+    for i in xrange(1, 100):
+        start_urls.append(base_url.format(ct=city, c=county, t=house_type, n=i+1))
 
     def parse(self, response):
         for sel in response.xpath("//div[@class='info-panel']"):
