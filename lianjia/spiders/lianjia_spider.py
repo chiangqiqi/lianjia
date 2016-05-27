@@ -21,13 +21,14 @@ class lianjiaSpider(scrapy.Spider):
     for i in xrange(1, 100):
         start_urls.append(base_url.format(ct=city, c=county, t=house_type, n=i+1))
 
+    keyfunMap = {"name_of_community": "div[1]/div[1]/a/span/text()" ,
+                 'layout_of_house': "div[1]/div[1]/span[1]/span/text()",
+                 'price_of_house':  "div[2]/div[1]/span/text()",
+                 'area_of_house': "div[1]/div[1]/span[2]/text()",
+                 'time_of_construction': "div[1]/div[2]/div/text()"}
     def parse(self, response):
         for sel in response.xpath("//div[@class='info-panel']"):
             lianjia = lianjiaItem()
-            lianjia['name_of_community'] = sel.xpath("div[1]/div[1]/a/span/text()").extract()
-            lianjia['layout_of_house'] = sel.xpath("div[1]/div[1]/span[1]/span/text()").extract()
-            lianjia['price_of_house'] = sel.xpath("div[2]/div[1]/span/text()").extract()
-            lianjia['area_of_house'] = sel.xpath("div[1]/div[1]/span[2]/text()").extract()
-            lianjia['time_of_construction'] = sel.xpath("div[1]/div[2]/div/text()").extract() 
-            
+            for k,v in self.keyfunMap.items():
+                lianjia[k] = sel.xpath(v).extract()
             yield lianjia
