@@ -14,7 +14,7 @@ class lianjiaSpider(scrapy.Spider):
     house_type = "ershoufang"
     county = "chaoyang"
     city = "bj"
-
+    
     base_url = "http://{ct}.lianjia.com/{t}/{c}/pg%{n}"
 
     start_urls = []

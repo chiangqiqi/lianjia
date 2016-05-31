@@ -15,7 +15,13 @@ NEWSPIDER_MODULE = 'lianjia.spiders'
 
 ITEM_PIPELINES = {
     'lianjia.pipelines.lianjiaPipeline' : 1,
+    'lianjia.pipelines.MongoDBPipeline': 1
 }
+
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "lianjian"
+MONGODB_COLLECTION = "ershoufang"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'lianjia (+http://www.yourdomain.com)'

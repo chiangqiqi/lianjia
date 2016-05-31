@@ -7,6 +7,11 @@
 
 import numpy as np
 
+import pymongo
+from scrapy.conf import settings
+from scrapy.exceptions import DropItem
+from scrapy import log
+
 class lianjiaPipeline(object):
     def __init__(self):
         self.file = open('lianjia.csv', 'wb')
@@ -45,19 +50,24 @@ class lianjiaPipeline(object):
     def spider_closed(self, spider):
         self.file.close()
 
-"""
-import json
+class MongoDBPipeline(object):
 
-class lianjiaPipeline(object):
     def __init__(self):
-        self.file = open('lianjia.json', 'wb')
- 
+        connection = pymongo.MongoClient(
+            settings['MONGODB_SERVER'],
+            settings['MONGODB_PORT']
+        )
+        db = connection[settings['MONGODB_DB']]
+        self.collection = db[settings['MONGODB_COLLECTION']]
+
     def process_item(self, item, spider):
-        line = json.dumps(dict(item), ensure_ascii = False) 
-        self.file.write(line.encode('utf-8') + "\n")
+        valid = True
+        for data in item:
+            if not data:
+                valid = False
+                raise DropItem("Missing {0}!".format(data))
+        if valid:
+            self.collection.insert(dict(item))
+            log.msg("record added to MongoDB database!",
+                    level=log.DEBUG, spider=spider)
         return item
-
-    def spider_closed(self, spider):
-        self.file.close()
-"""
-
