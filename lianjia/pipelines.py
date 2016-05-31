@@ -11,6 +11,7 @@ import pymongo
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
 from scrapy import log
+from datetime import datetime
 
 class lianjiaPipeline(object):
     def __init__(self):
@@ -20,7 +21,10 @@ class lianjiaPipeline(object):
             'price_of_house' + ',' + 'area_of_house' + ',' +
             'floor_of_house' + ',' + 'time_of_construction' + '\n'
         )
- 
+
+    def get_value(self, value):
+        value[0].strip()
+
     def process_item(self, item, spider):
     #该函数的作用有: 
         #1.将数据写入CSV文件 2.去除每个值的左右空格 
@@ -33,16 +37,18 @@ class lianjiaPipeline(object):
         else:
             pass
 
-        self.file.write(
+        # self.file.write(
+            # item.values()
+            # map(lambda x: self.get_value(x).encode('utf-8'), item.values()).join(",")
             #每个字段实际是一个列表, 如果只有一个值需要切片[0]取数
-	    item['name_of_community'][0].strip().encode('utf-8') + ',' +
-            item['layout_of_house'][0].strip().encode('utf-8') + ',' +
-            item['price_of_house'][0].strip().encode('utf-8') + ',' +
-            item['area_of_house'][0].strip().encode('utf-8') + ',' + 
-            #但是也有像下面的, 列表中有两个值, 正好拆开来存储为两个字段
-            item['time_of_construction'][0].strip().encode('utf-8') + ',' + 
-            item['time_of_construction'][1].strip().encode('utf-8') + '\n' 
-        )
+	    # item['name_of_community'][0].strip().encode('utf-8') + ',' +
+        #     item['layout_of_house'][0].strip().encode('utf-8') + ',' +
+        #     item['price_of_house'][0].strip().encode('utf-8') + ',' +
+        #     item['area_of_house'][0].strip().encode('utf-8') + ',' + 
+        #     #但是也有像下面的, 列表中有两个值, 正好拆开来存储为两个字段
+        #     item['time_of_construction'][0].strip().encode('utf-8') + ',' + 
+        #     item['time_of_construction'][1].strip().encode('utf-8') + '\n' 
+        # )
 
 
         return item
@@ -59,6 +65,7 @@ class MongoDBPipeline(object):
         )
         db = connection[settings['MONGODB_DB']]
         self.collection = db[settings['MONGODB_COLLECTION']]
+        self.datestr = datetime.now().strftime("%Y-%m-%d")
 
     def process_item(self, item, spider):
         valid = True
@@ -67,7 +74,8 @@ class MongoDBPipeline(object):
                 valid = False
                 raise DropItem("Missing {0}!".format(data))
         if valid:
-            self.collection.insert(dict(item))
+            data = dict(item)
+            self.collection.insert(data)
             log.msg("record added to MongoDB database!",
                     level=log.DEBUG, spider=spider)
         return item

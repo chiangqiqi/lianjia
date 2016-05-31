@@ -30,5 +30,5 @@ class lianjiaSpider(scrapy.Spider):
         for sel in response.xpath("//div[@class='info-panel']"):
             lianjia = lianjiaItem()
             for k,v in self.keyfunMap.items():
-                lianjia[k] = sel.xpath(v).extract()
+                lianjia[k] = sel.xpath(v).extract()[0].strip()
             yield lianjia
