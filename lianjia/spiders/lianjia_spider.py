@@ -3,11 +3,12 @@ from lianjia.items import lianjiaItem
 from datetime import datetime
 
 class lianjiaSpider(scrapy.Spider):
+
+    name = 'lianjia'
+    allowed_domains = ["lianjia.com"]
+
     def __init__(self, args):
         "docstring"
-
-        name = 'lianjia'
-        allowed_domains = ["lianjia.com"]
         city_and_page = {
             'dongcheng': 99, 'cicheng': 100, 'chaoyang': 100, 'haidian': 100,
             'fengtai': 100, 'shijingshan': 96, 'tongzhou': 93, 'changping': 100,
